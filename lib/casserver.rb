@@ -8,4 +8,5 @@ require 'logger'
 $LOG = Logger.new(STDOUT)
 
 require 'casserver/server'
+require 'casserver/api'
 
