@@ -19,7 +19,6 @@ module CASServer
     set :log, {:file => 'casserver.log', :level => 'DEBUG'}
     set :uri_path,  ""
     set :server, 'webrick'
-
   end
 end
 

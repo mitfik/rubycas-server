@@ -20,8 +20,8 @@ describe 'Api' do
   end
 
   before do
-    load_server(File.dirname(__FILE__) + "/default_config.yml")
-    reset_spec_database
+    load_server(app)
+    reset_spec_database(app)
   end
 
   describe 'json' do

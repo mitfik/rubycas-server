@@ -1,9 +1,9 @@
+ENV['RACK_ENV'] = "test"
+
 require 'rubygems'
 require 'sinatra'
 require 'rack/test'
 require 'rspec'
-#require 'spec/autorun'
-#require 'spec/interop/test'
 require 'logger'
 require 'ostruct'
 
@@ -16,6 +16,7 @@ CASServer::Authenticators.autoload :ActiveDirectoryLDAP, 'lib/casserver/authenti
 CASServer::Authenticators.autoload :LDAP, 'lib/casserver/authenticators/ldap.rb'
 CASServer::Authenticators.autoload :SQL, 'lib/casserver/authenticators/sql.rb'
 CASServer::Authenticators.autoload :Google, 'lib/casserver/authenticators/google.rb'
+CASServer::Authenticators.autoload :Test, 'lib/casserver/authenticators/test.rb'
 
 # set test environment
 set :environment, :test
@@ -27,13 +28,6 @@ set :logging, false
 if Dir.getwd =~ /\/spec$/
   # Avoid potential weirdness by changing the working directory to the CASServer root
   FileUtils.cd('..')
-end
-
-def silence_warnings
-  old_verbose, $VERBOSE = $VERBOSE, nil
-  yield
-ensure
-  $VERBOSE = old_verbose
 end
 
 # Ugly monkeypatch to allow us to test for correct redirection to
@@ -66,30 +60,37 @@ end
 # we're forced to delay loading of the server code
 # until the start of each test so that certain 
 # configuraiton options can be changed (e.g. `uri_path`)
-def load_server(config_file)
-  ENV['CONFIG_FILE'] = config_file
+def load_server(app)
   
-  silence_warnings do
-    load File.dirname(__FILE__) + '/../lib/casserver/server.rb'
-  end
-  
-  CASServer::Server.enable(:raise_errors)
-  CASServer::Server.disable(:show_exceptions)
-
+  app.enable(:raise_errors)
+  app.disable(:show_exceptions)
   #Capybara.current_driver = :selenium
-  Capybara.app = CASServer::Server
+  Capybara.app = app
 end
 
-# Deletes the sqlite3 database specified in the app's config
-# and runs the db:migrate rake tasks to rebuild the database schema.
-def reset_spec_database
+# Deletes the database specified in the app's config
+# and runs the migrations to rebuild the database schema.
+def reset_spec_database(app)
   raise "Cannot reset the spec database because config[:database][:database] is not defined." unless
-    CASServer::Server.config[:database] && CASServer::Server.config[:database][:database]
+    app.settings.database && app.settings.database[:database]
 
-  FileUtils.rm_f(CASServer::Server.config[:database][:database])
-  
+  ActiveRecord::Base.establish_connection(app.settings.database)
+  case app.settings.database[:adapter]
+  when /sqlite/
+    require 'pathname'
+    path = Pathname.new(app.settings.database[:database])
+    file = path.absolute? ? path.to_s : File.join(app.settings.root, '..', '..', path)
+
+    FileUtils.rm(file) if File.exist?(file)
+  else 
+    ActiveRecord::Base.connection.drop_database app.settings.database[:database]
+  end
+
   ActiveRecord::Base.logger = Logger.new(STDOUT)
   ActiveRecord::Base.logger.level = Logger::ERROR
   ActiveRecord::Migration.verbose = false
   ActiveRecord::Migrator.migrate("db/migrate")
 end
+
+
+

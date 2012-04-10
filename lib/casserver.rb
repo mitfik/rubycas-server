@@ -13,3 +13,4 @@ CASServer::Authenticators.autoload :ActiveDirectoryLDAP, 'lib/casserver/authenti
 CASServer::Authenticators.autoload :LDAP, 'lib/casserver/authenticators/ldap.rb'
 CASServer::Authenticators.autoload :SQL, 'lib/casserver/authenticators/sql.rb'
 CASServer::Authenticators.autoload :Google, 'lib/casserver/authenticators/google.rb'
+CASServer::Authenticators.autoload :Test, 'lib/casserver/authenticators/test.rb'
