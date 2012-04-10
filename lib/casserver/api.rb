@@ -127,9 +127,6 @@ module CASServer
         end
       rescue CASServer::AuthenticatorError => e
         $LOG.error(e)
-        # generate another login ticket to allow for re-submitting the form
-        lt = generate_login_ticket.ticket
-        @replay[:lt] = lt
         @replay[:type] = 'error'
         @replay[:message] = e.to_s
         status 401
