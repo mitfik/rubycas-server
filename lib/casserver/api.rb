@@ -1,4 +1,3 @@
-require 'casserver/localization'
 require 'casserver/utils'
 require 'casserver/cas'
 require 'casserver/base'

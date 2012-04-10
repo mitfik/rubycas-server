@@ -1,9 +1,14 @@
 require 'sinatra/base'
 require 'sinatra/config_file'
+require 'sinatra/r18n'
 
 module CASServer 
   class Base < Sinatra::Base
     register Sinatra::ConfigFile
+    register Sinatra::R18n
+
+    set :default_locale, 'en'
+    set :translations,   './locales'
 
     config_file '../../config/config.yml'
 

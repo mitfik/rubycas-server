@@ -1,5 +1,4 @@
 require 'sinatra/base'
-require 'casserver/localization'
 require 'casserver/utils'
 require 'casserver/cas'
 
@@ -17,7 +16,6 @@ module CASServer
     end
     
     include CASServer::CAS # CAS protocol helpers
-    include Localization
 
     set :app_file, __FILE__
     set :public_folder, Proc.new { settings.config[:public_dir] || File.join(root, "..", "..", "public") }
