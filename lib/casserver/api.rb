@@ -51,11 +51,11 @@ module CASServer
 
         $LOG.info("User '#{tgt.username}' logged out.")
         @replay[:type] = "confirmation"
-        @replay[:message] = _("You have successfully logged out.")
+        @replay[:message] = t.notice.successfull_logged_out
         status 200
       else
         @replay[:type] = "notice"
-        @replay[:message] = _("Your granting ticket is invalid.")
+        @replay[:message] = t.error.invalid_granting_ticket
         status 203
       end
       prepare_replay_for(request)
@@ -102,7 +102,7 @@ module CASServer
           @replay[:tgt] = tgt.to_s
 
           if service.blank?
-            @replay[:message] = _("You have successfully logged in.")
+            @replay[:message] = t.notice.successfull_logged_in
             status 201
           else
             # TODO
@@ -116,14 +116,14 @@ module CASServer
               #redirect service_with_ticket, 303 # response code 303 means "See Other" (see Appendix B in CAS Protocol spec)
             rescue URI::InvalidURIError
               $LOG.error("The service '#{service}' is not a valid URI!")
-              @replay[:message] = _("The target service your browser supplied appears to be invalid. Please contact your system administrator for help.")
+              @replay[:message] = t.error.invalid_target_service
               @replay[:type] = 'error'
             end
           end
         else
           $LOG.warn("Invalid credentials given for user '#{username}'")
           @replay[:type] = 'error'
-          @replay[:message] = _("Incorrect username or password.")
+          @replay[:message] = t.error.incorrect_username_or_password
           status 401
         end
       rescue CASServer::AuthenticatorError => e

@@ -9,6 +9,7 @@ error:
   invalid_target_service: "你的瀏覽器傳送的服務網址是無效的，請向你的系統管理員尋求協助"
   unable_to_authenticate: "現在無法認證，請稍候再嘗試登入"
   no_service_parameter_given: "無法完成 gateway request 因為沒有提供 service 的參數"
+  invalid_granting_ticket: "Your granting ticket is invalid."
 
 notice:
   logged_in_as: "你正以 '%1' 的身分登入。如果這不是你，請重新登入"
