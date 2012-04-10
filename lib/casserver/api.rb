@@ -1,14 +1,14 @@
-require 'sinatra/base'
 require 'casserver/localization'
 require 'casserver/utils'
 require 'casserver/cas'
+require 'casserver/base'
 
 require 'logger'
 #$LOG ||= Logger.new(STDOUT)
 $LOG = Logger.new(STDOUT)
 
 module CASServer
-  class APIServer < Sinatra::Base
+  class APIServer < CASServer::Base
     # TODO change that for some CAS helpers 
     include CASServer::CAS 
 
@@ -35,7 +35,7 @@ module CASServer
       if tgt
         CASServer::Model::TicketGrantingTicket.transaction do
           tgt.granted_service_tickets.each do |st|
-            send_logout_notification_for_service_ticket(st) if config[:enable_single_sign_out]
+            send_logout_notification_for_service_ticket(st) if settings.enable_single_sign_out
             st.destroy
           end
           pgts = CASServer::Model::ProxyGrantingTicket.find(:all,
@@ -70,20 +70,18 @@ module CASServer
       username = params['username'].to_s.strip
       password = params['password']
       
-      username.downcase! if username && settings.config[:downcase_username]
+      username.downcase! if username && settings.downcase_username
 
       credentials_are_valid = false
       extra_attributes = {}
       successful_authenticator = nil
       begin
         auth_index = 0
-        settings.auth.each do |auth_class|
-          auth = auth_class.new
+        settings.authenticators.each_with_index do |authenticator, index|
+          require authenticator["source"] if authenticator["source"].present?
+          auth = authenticator["class"].constantize.new
 
-          auth_config = settings.config[:authenticator][auth_index]
-          # pass the authenticator index to the configuration hash in case the authenticator needs to know
-          # it splace in the authenticator queue
-          auth.configure(auth_config.merge('auth_index' => auth_index))
+          auth.configure(HashWithIndifferentAccess.new(authenticator.merge('auth_index' => index)))
 
           credentials_are_valid = auth.validate(
             :username => username,
@@ -96,8 +94,6 @@ module CASServer
             successful_authenticator = auth
             break
           end
-
-          auth_index += 1
         end
         
         if credentials_are_valid

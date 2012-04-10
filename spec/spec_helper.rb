@@ -9,6 +9,13 @@ require 'ostruct'
 
 require 'capybara'
 require 'capybara/dsl'
+require 'casserver/authenticators/base'
+
+# autoload all authenticators
+CASServer::Authenticators.autoload :ActiveDirectoryLDAP, 'lib/casserver/authenticators/active_directory_ldap/'
+CASServer::Authenticators.autoload :LDAP, 'lib/casserver/authenticators/ldap.rb'
+CASServer::Authenticators.autoload :SQL, 'lib/casserver/authenticators/sql.rb'
+CASServer::Authenticators.autoload :Google, 'lib/casserver/authenticators/google.rb'
 
 # set test environment
 set :environment, :test
