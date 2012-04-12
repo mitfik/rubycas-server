@@ -28,12 +28,12 @@ module CASServer
     #        {:type => "confirmation", :service => params[:service] }
     delete "/logout", :provides => [:json, :xml] do
       @replay = {} 
-      gateway = params['gateway'] == 'true'
       tgt = CASServer::Model::TicketGrantingTicket.find_by_ticket(request.cookies['tgt'])
 
       if tgt
         CASServer::Model::TicketGrantingTicket.transaction do
           tgt.granted_service_tickets.each do |st|
+            # TODO this must be send in background because block app server
             send_logout_notification_for_service_ticket(st) if settings.enable_single_sign_out
             st.destroy
           end
@@ -75,11 +75,9 @@ module CASServer
       extra_attributes = {}
       successful_authenticator = nil
       begin
-        auth_index = 0
         settings.authenticators.each_with_index do |authenticator, index|
           require authenticator["source"] if authenticator["source"].present?
           auth = authenticator["class"].constantize.new
-
           auth.configure(HashWithIndifferentAccess.new(authenticator.merge('auth_index' => index)))
 
           credentials_are_valid = auth.validate(
