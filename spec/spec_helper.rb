@@ -24,36 +24,36 @@ set :run, false
 set :raise_errors, true
 set :logging, false
 
+#if Dir.getwd =~ /\/spec$/
+#  # Avoid potential weirdness by changing the working directory to the CASServer root
+#  FileUtils.cd('..')
+#end
 
-if Dir.getwd =~ /\/spec$/
-  # Avoid potential weirdness by changing the working directory to the CASServer root
-  FileUtils.cd('..')
-end
-
+# TODO: check and replace
 # Ugly monkeypatch to allow us to test for correct redirection to
 # external services.
 #
 # This will likely break in the future when Capybara or RackTest are upgraded.
-class Capybara::Driver::RackTest
-  def current_url
-    if @redirected_to_external_url
-      @redirected_to_external_url
-    else
-      request.url rescue ""
-    end
-  end
-
-  def follow_redirects!
-    if response.redirect? && response['Location'] =~ /^http[s]?:/
-      @redirected_to_external_url = response['Location']
-    else
-      5.times do
-        follow_redirect! if response.redirect?
-      end
-      raise Capybara::InfiniteRedirectError, "redirected more than 5 times, check for infinite redirects." if response.redirect?
-    end
-  end
-end
+#class Capybara::Driver::RackTest
+#  def current_url
+#    if @redirected_to_external_url
+#      @redirected_to_external_url
+#    else
+#      request.url rescue ""
+#    end
+#  end
+#
+#  def follow_redirects!
+#    if response.redirect? && response['Location'] =~ /^http[s]?:/
+#      @redirected_to_external_url = response['Location']
+#    else
+#      5.times do
+#        follow_redirect! if response.redirect?
+#      end
+#      raise Capybara::InfiniteRedirectError, "redirected more than 5 times, check for infinite redirects." if response.redirect?
+#    end
+#  end
+#end
 
 # This called in specs' `before` block.
 # Due to the way Sinatra applications are loaded,
