@@ -1,17 +1,19 @@
 # encoding: UTF-8
 require File.dirname(__FILE__) + '/spec_helper'
-
-module CASServer
-end
 require 'casserver/model'
+require 'casserver/server'
 
 describe CASServer::Model::LoginTicket, '.cleanup(max_lifetime, max_unconsumed_lifetime)' do
   let(:max_lifetime) { -1 }
   let(:max_unconsumed_lifetime) { -2 }
 
+  def app
+    CASServer::Server
+  end
+
   before do
-    load_server(File.dirname(__FILE__) + "/default_config.yml")
-    reset_spec_database
+    load_server(app)
+    reset_spec_database(app)
     
     CASServer::Model::LoginTicket.create :ticket => 'test', :client_hostname => 'test.local'
   end
