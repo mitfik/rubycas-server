@@ -3,7 +3,6 @@ require 'casserver/authenticators/sql'
 require 'digest/sha1'
 require 'digest/sha2'
 require 'crypt-isaac'
-require 'bcrypt'
 
 # This is a more secure version of the SQL authenticator. Passwords are encrypted
 # rather than being stored in plain text.
@@ -18,30 +17,31 @@ class CASServer::Authenticators::SQLEncrypted < CASServer::Authenticators::SQL
   # Your model must have an 'encrypted_password' column where the password will be stored,
   # and an 'encryption_salt' column that will be populated with a random string before
   # the user record is first created.
-  module EncryptedPassword
-    def self.included(mod)
-      raise "#{self} should be inclued in an ActiveRecord class!" unless mod.respond_to?(:before_save)
-      mod.before_save :generate_encryption_salt
-    end
+ # TODO: this should be provide by application not rubycas server, think about that and remove
+ # module EncryptedPassword
+ #   def self.included(mod)
+ #     raise "#{self} should be inclued in an ActiveRecord class!" unless mod.respond_to?(:before_save)
+ #     mod.before_save :generate_encryption_salt
+ #   end
 
-    def encrypt(str)
-      generate_encryption_salt unless encryption_salt
-      Digest::SHA256.hexdigest("#{encryption_salt}::#{str}")
-    end
+ #   def encrypt(str)
+ #     generate_encryption_salt unless encryption_salt
+ #     Digest::SHA256.hexdigest("#{encryption_salt}::#{str}")
+ #   end
 
-    def password=(password)
-      self[:encrypted_password] = encrypt(password)
-    end
+ #   def password=(password)
+ #     self[:encrypted_password] = encrypt(password)
+ #   end
 
-    def generate_encryption_salt
-      self.encryption_salt = Digest::SHA1.hexdigest(Crypt::ISAAC.new.rand(2**31).to_s) unless
-        encryption_salt
-    end
-  end
+ #   def generate_encryption_salt
+ #     self.encryption_salt = Digest::SHA1.hexdigest(Crypt::ISAAC.new.rand(2**31).to_s) unless
+ #       encryption_salt
+ #   end
+ # end
 
   def self.setup(options)
     super(options)
-    user_model.__send__(:include, EncryptedPassword)
+    #user_model.__send__(:include, EncryptedPassword)
   end
 
   def validate(credentials)
