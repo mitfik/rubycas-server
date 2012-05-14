@@ -148,16 +148,25 @@ module CASServer
     end
 
     # :category: API
-    # 
-    # return:: Status code:
-    get '/validate' do
-      raise NotImplementedError
+    #
+    # return:: Status code: 201 or 401
+    get '/validateTicket' do
+      @replay = {}
+      if tgc = request.cookies['tgt']
+        tgt, tgt_error = validate_ticket_granting_ticket(tgc)
+      end
+      if tgt and !tgt_error
+        status 201
+      else
+        status 401
+      end
     end
 
     # :category: API
     # 
     # return:: Status code:
     get '/serviceValidate' do
+      @replay = {}
 			# required
 			service = clean_service_url(params['service'])
 			ticket = params['ticket']

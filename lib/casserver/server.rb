@@ -24,7 +24,7 @@ module CASServer
     end
 
     # The #.#.# comments (e.g. "2.1.3") refer to section numbers in the CAS protocol spec
-    # under http://www.ja-sig.org/products/cas/overview/protocol/index.html
+    # under http://www.jasig.org/cas/protocol
     
     # 2.1 :: Login
 
