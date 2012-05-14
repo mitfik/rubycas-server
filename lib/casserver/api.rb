@@ -150,7 +150,7 @@ module CASServer
     # :category: API
     #
     # return:: Status code: 201 or 401
-    get '/validateTicket' do
+    get '/validateTicket', :provides => [:json, :xml] do
       @replay = {}
       if tgc = request.cookies['tgt']
         tgt, tgt_error = validate_ticket_granting_ticket(tgc)
