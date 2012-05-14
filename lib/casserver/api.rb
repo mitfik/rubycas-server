@@ -158,7 +158,33 @@ module CASServer
     # 
     # return:: Status code:
     get '/serviceValidate' do
-      raise NotImplementedError
+			# required
+			service = clean_service_url(params['service'])
+			ticket = params['ticket']
+			# optional
+			pgt_url = params['pgtUrl']
+			renew = params['renew']
+
+			st, error = validate_service_ticket(service, ticket)
+			success = st && !error
+
+			if success
+        username = st.username
+        @replay[:type] = "confirmation"
+        @replay[:username] = username
+        status 201
+        if pgt_url
+          raise NotImplementedError
+        end
+        extra_attributes = st.granted_by_tgt.extra_attributes || {}
+      else
+        @replay[:type] = "error"
+        @replay[:message] = error
+      end
+
+      status 401 if error
+
+      prepare_replay_for(request)
     end
 
     # :category: API
