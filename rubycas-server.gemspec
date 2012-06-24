@@ -33,7 +33,7 @@ For more information on RubyCAS-Server, see http://code.google.com/p/rubycas-ser
   s.add_dependency("activesupport", ">= 2.3.12", "< 3.1")
   s.add_dependency("sinatra", "~> 1.3")
   s.add_dependency("sinatra-contrib")
-  s.add_dependency("sinatra-r18n")
+  s.add_dependency("sinatra-r18n", "~> 0.4.14")
   s.add_dependency("crypt-isaac", "~> 0.9.1")
 
   s.add_development_dependency("rack-test")
