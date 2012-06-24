@@ -9,6 +9,7 @@ require 'casserver/authenticators/base'
 
 CASServer::Authenticators.autoload :ActiveDirectoryLDAP, 'casserver/authenticators/active_directory_ldap/'
 CASServer::Authenticators.autoload :LDAP, 'casserver/authenticators/ldap.rb'
+CASServer::Authenticators.autoload :SQLEncrypted, 'lib/casserver/authenticators/sql_encrypted.rb'
 CASServer::Authenticators.autoload :SQL, 'casserver/authenticators/sql.rb'
 CASServer::Authenticators.autoload :Google, 'casserver/authenticators/google.rb'
 
