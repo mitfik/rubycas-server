@@ -12,7 +12,7 @@ module CASServer
     set :translations,   './locales'
 
     config_file File.join("..","..",ENV['CONFIG_FILE'] || "config/config.yml")
-
+    
     # default configuration
     set :maximum_unused_login_ticket_lifetime, 6.minutes unless settings.respond_to? "maximum_unused_login_ticket_lifetime"
     set :maximum_unused_service_ticket_lifetime, 5.minutes unless settings.respond_to? "maximum_unused_service_ticket_lifetime"
@@ -42,7 +42,8 @@ module CASServer
           $LOG.info "Your database is now up to date."
         end
         ActiveRecord::Base.establish_connection(settings.database)
-      rescue
+      rescue => e
+        $LOG.error e
         raise "Problem to establish connection to database. Check if is correct configured"
       end
     end
