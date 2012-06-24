@@ -1,13 +1,10 @@
-require 'sinatra/base'
 require 'casserver/localization'
 require 'casserver/utils'
 require 'casserver/cas'
-
-require 'logger'
-$LOG ||= Logger.new(STDOUT)
+require 'casserver/base'
 
 module CASServer
-  class Server < Sinatra::Base
+  class Server < CASServer::Base
     if ENV['CONFIG_FILE']
       CONFIG_FILE = ENV['CONFIG_FILE']
     elsif !(c_file = File.dirname(__FILE__) + "/../../config.yml").nil? && File.exist?(c_file)
