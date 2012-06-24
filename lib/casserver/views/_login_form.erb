@@ -1,6 +1,6 @@
 <%# coding: UTF-8 -%>
 <form method="post" action="<%= @form_action || "login" %>" id="login-form"
-      onsubmit="submitbutton = document.getElementById('login-submit'); submitbutton.value='<%= t.notice.please_wait %>'; submitbutton.disabled=true; return true;">
+      onsubmit="submitbutton = document.getElementById('login-submit'); submitbutton.value='<%= t.label.please_wait %>'; submitbutton.disabled=true; return true;">
   <table id="form-layout">
     <tr>
       <td id="username-label-container">

@@ -62,6 +62,7 @@ class CASServer::Authenticators::SQL < CASServer::Authenticators::Base
 
     class_eval %{
       class #{user_model_name} < ActiveRecord::Base
+        set_inheritance_column "#{(options[:user_table] || 'users')}"
       end
     }
 

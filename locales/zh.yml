@@ -9,6 +9,7 @@ error:
   invalid_target_service: "你的浏览器提供的网址是无效的，请联系你的系统管理员"
   unable_to_authenticate: "现在无法认证，请稍后重试"
   no_service_parameter_given: "无法完成网关请求，因为没有提供服务的参数"
+  invalid_granting_ticket: "Your granting ticket is invalid."
 
 notice:
   logged_in_as: "你正以 '%1' 的身份登入。如果这不是你，请重新登录"

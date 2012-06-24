@@ -8,4 +8,8 @@ use Rack::ShowExceptions
 use Rack::Runtime
 use Rack::CommonLogger
 
-run CASServer::Server.new
+
+run Rack::URLMap.new({
+  "/" => CASServer::Server,
+  "/api" => CASServer::APIServer
+})

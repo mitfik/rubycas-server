@@ -9,6 +9,7 @@ error:
   invalid_target_service: "Podany parametr 'service' jest nie prawidłowy. Skontaktuj się z administratorem systemu aby uzyskać pomoc."
   unable_to_authenticate: "System nie jest wstanie przeprowadzić autentykacji. Proszę spróbować poźniej"
   no_service_parameter_given: "System nie może spełnić żądania ponieważ brakuje parametru 'service'."
+  invalid_granting_ticket: "Klucz autoryzacyjny jest nieprawidłowy"
 
 notice:
   logged_in_as: "Jesteś aktualnie zalogowany jako '%1'. Jeżeli to nie jesteś ty, zaloguj się tutaj."

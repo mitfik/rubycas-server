@@ -9,6 +9,7 @@ error:
   invalid_target_service: "O seu navegador está aparentemente com problemas. Por favor, contate o administrador do sistema para obter ajuda."
   unable_to_authenticate: "O cliente e o servidor não puderam efetuar a autenticação. por favor, tente novamente mais tarde."
   no_service_parameter_given: "O servidor não pode completar a solicitação porque não foi enviado o paramêtro do serviço."
+  invalid_granting_ticket: "Your granting ticket is invalid."
 
 notice:
   logged_in_as: "Você está logado como '%1'. Se este não for você, Por favor, faça o login a baixo."

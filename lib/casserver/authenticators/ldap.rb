@@ -58,8 +58,8 @@ class CASServer::Authenticators::LDAP < CASServer::Authenticators::Base
 
       return true
     rescue Net::LDAP::LdapError => e
-      raise CASServer::AuthenticatorError,
-        "LDAP authentication failed with '#{e}'. Check your authenticator configuration."
+      $LOG.fatal "LDAP authentication failed with '#{e}'. Check your authenticator configuration."
+      return false
     end
   end
 
