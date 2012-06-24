@@ -12,11 +12,11 @@ require 'capybara/dsl'
 require 'casserver/authenticators/base'
 
 # autoload all authenticators
-CASServer::Authenticators.autoload :ActiveDirectoryLDAP, 'lib/casserver/authenticators/active_directory_ldap/'
-CASServer::Authenticators.autoload :LDAP, 'lib/casserver/authenticators/ldap.rb'
-CASServer::Authenticators.autoload :SQL, 'lib/casserver/authenticators/sql.rb'
-CASServer::Authenticators.autoload :Google, 'lib/casserver/authenticators/google.rb'
-CASServer::Authenticators.autoload :Test, 'lib/casserver/authenticators/test.rb'
+CASServer::Authenticators.autoload :ActiveDirectoryLDAP, 'casserver/authenticators/active_directory_ldap/'
+CASServer::Authenticators.autoload :LDAP, 'casserver/authenticators/ldap.rb'
+CASServer::Authenticators.autoload :SQL, 'casserver/authenticators/sql.rb'
+CASServer::Authenticators.autoload :Google, 'casserver/authenticators/google.rb'
+CASServer::Authenticators.autoload :Test, 'casserver/authenticators/test.rb'
 
 # set test environment
 set :environment, :test
