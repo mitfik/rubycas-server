@@ -1,17 +1,8 @@
 # encoding: UTF-8
 require File.dirname(__FILE__) + '/spec_helper'
-require 'lib/casserver/api'
+require 'casserver/api'
 
 $LOG = Logger.new(File.basename(__FILE__).gsub('.rb','.log'))
-
-module LoggedInAsUser
-  extend RSpec::Core::SharedContext
-  before(:each) do
-    post '/login', { :username => "spec_user", :password => "spec_password"}, "HTTP_ACCEPT" => "application/json"
-    last_response.status == 201
-    @body = JSON.parse(last_response.body)
-  end
-end
 
 describe 'Api' do
 
@@ -46,7 +37,11 @@ describe 'Api' do
     end
 
     describe 'user is logged' do
-      include LoggedInAsUser
+      before(:each) do
+        post '/login', { :username => "spec_user", :password => "spec_password"}, "HTTP_ACCEPT" => "application/json"
+        last_response.status == 201
+        @body = JSON.parse(last_response.body)
+      end
 
       it 'should get tgt' do
         @body["type"].should eq "confirmation"
