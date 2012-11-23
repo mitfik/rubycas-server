@@ -1,5 +1,4 @@
 require 'rubygems'
-require 'sinatra'
 require 'rack/test'
 require 'rspec'
 #require 'spec/autorun'
@@ -18,12 +17,14 @@ CASServer::Authenticators.autoload :SQL, 'casserver/authenticators/sql.rb'
 CASServer::Authenticators.autoload :SQLEncrypted, 'lib/casserver/authenticators/sql_encrypted.rb'
 CASServer::Authenticators.autoload :Google, 'casserver/authenticators/google.rb'
 
-# set test environment
-set :environment, :test
-set :run, false
-set :raise_errors, true
-set :logging, false
-
+# require builder because it doesn't pull in the version
+# info automatically...
+begin
+  require 'builder'
+  require 'builder/version'
+rescue LoadError
+  puts "builder not found, testing ActiveRecord 2.3?"
+end
 
 if Dir.getwd =~ /\/spec$/
   # Avoid potential weirdness by changing the working directory to the CASServer root
@@ -52,7 +53,6 @@ class Capybara::RackTest::Browser
 
   def follow_redirects!
     if last_response.redirect? && last_response['Location'] =~ /^http[s]?:/
-      puts "FOLLOWING REDIECT: #{last_response['Location']}"
       @redirected_to_external_url = last_response['Location']
     else
       5.times do
@@ -68,18 +68,28 @@ end
 # we're forced to delay loading of the server code
 # until the start of each test so that certain 
 # configuraiton options can be changed (e.g. `uri_path`)
-def load_server(config_file)
-  ENV['CONFIG_FILE'] = config_file
+def load_server(config_file = 'default_config')
+  ENV['CONFIG_FILE'] = File.join(File.dirname(__FILE__),'config',"#{config_file}.yml")
   
   silence_warnings do
     load File.dirname(__FILE__) + '/../lib/casserver/server.rb'
   end
   
+  # set test environment
+  CASServer::Server.set :environment, :test
+  CASServer::Server.set :run, false
+  CASServer::Server.set :raise_errors, true
+  CASServer::Server.set :logging, false
+
   CASServer::Server.enable(:raise_errors)
   CASServer::Server.disable(:show_exceptions)
 
   #Capybara.current_driver = :selenium
   Capybara.app = CASServer::Server
+
+  def app
+    CASServer::Server
+  end
 end
 
 # Deletes the sqlite3 database specified in the app's config

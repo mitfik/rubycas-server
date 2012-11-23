@@ -14,6 +14,7 @@ ATTACK_USERNAME = '%3E%22%27%3E%3Cscript%3Ealert%2826%29%3C%2Fscript%3E&password
 INVALID_PASSWORD = 'invalid_password'
 
 describe 'CASServer' do
+  include Rack::Test::Methods
 
   before do
     @target_service = 'http://my.app.test'
@@ -21,7 +22,7 @@ describe 'CASServer' do
 
   describe "/login" do
     before do
-      load_server(File.dirname(__FILE__) + "/default_config.yml")
+      load_server("default_config")
       reset_spec_database
     end
 
@@ -97,7 +98,7 @@ describe 'CASServer' do
   describe '/logout' do
 
     before do
-      load_server(File.dirname(__FILE__) + "/default_config.yml")
+      load_server("default_config")
       reset_spec_database
     end
 
@@ -117,7 +118,7 @@ describe 'CASServer' do
 
   describe 'Configuration' do
     it "uri_path value changes prefix of routes" do
-      load_server(File.dirname(__FILE__) + "/alt_config.yml")
+      load_server("alt_config")
       @target_service = 'http://my.app.test'
 
       visit "/test/login"
@@ -130,7 +131,7 @@ describe 'CASServer' do
 
   describe "proxyValidate" do
     before do
-      load_server(File.dirname(__FILE__) + "/default_config.yml")
+      load_server("default_config")
       reset_spec_database
 
       visit "/login?service="+CGI.escape(@target_service)
@@ -145,12 +146,10 @@ describe 'CASServer' do
     end
 
     it "should have extra attributes in proper format" do
-      visit "/serviceValidate?service=#{CGI.escape(@target_service)}&ticket=#{@ticket}"
+      get "/serviceValidate?service=#{CGI.escape(@target_service)}&ticket=#{@ticket}"
 
-      encoded_utf_string = "&#1070;&#1090;&#1092;" # actual string is "Ютф"
-      page.body.should match("<test_utf_string>#{encoded_utf_string}</test_utf_string>")
-      page.body.should match("<test_numeric>123.45</test_numeric>")
-      page.body.should match("<test_utf_string>&#1070;&#1090;&#1092;</test_utf_string>")
+      last_response.content_type.should match 'text/xml'
+      last_response.body.should match "<test_utf_string>Ютф</test_utf_string>"
     end
   end
 end
